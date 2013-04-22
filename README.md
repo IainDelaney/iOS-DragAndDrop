@@ -1,5 +1,7 @@
 # // draggable
 
+This fork is replacing the draggable UIView sub-class with a UIImageView subclass
+
 ![Screenshot](https://github.com/brynbellomy/iOS-DragAndDrop/raw/master/SEDraggableDemo/screenshot.png)
 
 # wtf is this
