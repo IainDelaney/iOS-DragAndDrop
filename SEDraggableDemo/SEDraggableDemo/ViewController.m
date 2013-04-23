@@ -116,12 +116,11 @@
 
 - (void) setupDraggableObjects {
   // set up the SEDraggables
-  NSArray *pngs = [NSArray arrayWithObjects:@"crocodile", @"red-applo", @"bryn-applo", @"cat", @"dog", @"monkey", @"sheep", @"robo-fox", @"blue-applo", nil];
+  NSArray *pngs = @[@"crocodile", @"red-applo", @"bryn-applo", @"cat", @"dog", @"monkey", @"sheep", @"robo-fox", @"blue-applo"];
   
   for (NSString *png in pngs) {
-    UIImage *draggableImage = UIImageWithBundlePNG(png);
-    UIImageView *draggableImageView = [[UIImageView alloc] initWithImage: draggableImage];
-    SEDraggable *draggable = [[SEDraggable alloc] initWithImageView: draggableImageView];
+    UIImage *draggableImage = [UIImage imageNamed:png];
+    SEDraggable *draggable = [[SEDraggable alloc] initWithImage: draggableImage];
     [self configureDraggableObject: draggable];
   }
 }
