@@ -32,7 +32,7 @@
 @end
 
 // keyed archiving constants
-#define kPAN_GESTURE_RECOGNIZER_KEY 						@"panGestureRecognizer"
+#define kPAN_GESTURE_RECOGNIZER_KEY 			@"panGestureRecognizer"
 #define kCURRENT_LOCATION_KEY                   @"currentLocation"
 #define kHOME_LOCATION_KEY                      @"homeLocation"
 #define kPREVIOUS_LOCATION_KEY                  @"previousLocation"
@@ -43,33 +43,20 @@
 #define kFIRST_X_KEY                            @"firstX"
 #define kFIRST_Y_KEY                            @"firstY"
 
-@interface SEDraggable : UIView <SEDraggableLocationClient, UIGestureRecognizerDelegate, NSCoding> {
+@interface SEDraggable : UIImageView <SEDraggableLocationClient, UIGestureRecognizerDelegate, NSCoding>
 
-  SEDraggableLocation *_homeLocation;
-  SEDraggableLocation __unsafe_unretained *_currentLocation;
-  SEDraggableLocation __unsafe_unretained *_previousLocation;
-  NSMutableSet *_droppableLocations;
-  UIPanGestureRecognizer *_panGestureRecognizer;
-  BOOL _shouldSnapBackToHomeLocation;
-  BOOL _shouldSnapBackToDragOrigin;
-  CGFloat firstX;
-  CGFloat firstY;
-  id <SEDraggableEventResponder> __unsafe_unretained _delegate;
-}
+@property (nonatomic, strong) UIPanGestureRecognizer *panGestureRecognizer;
+@property (nonatomic, weak) SEDraggableLocation *currentLocation;
+@property (nonatomic, weak) SEDraggableLocation *homeLocation;
 
-@property (nonatomic, readwrite, strong) UIPanGestureRecognizer *panGestureRecognizer;
-@property (nonatomic, readwrite, unsafe_unretained) SEDraggableLocation *currentLocation;
-@property (nonatomic, readwrite, strong) SEDraggableLocation *homeLocation; // @@TODO: make sure this isn't causing retain cycles mmMmMMMmMMmm
-@property (nonatomic, readwrite, unsafe_unretained) SEDraggableLocation *previousLocation;
-@property (nonatomic, readwrite, strong) NSMutableSet *droppableLocations;
-@property (nonatomic, readwrite, unsafe_unretained) id <SEDraggableEventResponder> delegate;
-@property (nonatomic, readwrite) BOOL shouldSnapBackToHomeLocation;
-@property (nonatomic, readwrite) BOOL shouldSnapBackToDragOrigin;
+@property (nonatomic, weak) SEDraggableLocation *previousLocation;
+@property (nonatomic, strong) NSMutableSet *droppableLocations;
+@property (nonatomic, weak) id <SEDraggableEventResponder> delegate;
+@property (nonatomic, assign) BOOL shouldSnapBackToHomeLocation;
+@property (nonatomic, assign) BOOL shouldSnapBackToDragOrigin;
 @property (nonatomic, readonly) CGFloat firstX;
 @property (nonatomic, readonly) CGFloat firstY;
 
-- (id) initWithImage:(UIImage *)image andSize:(CGSize)size;
-- (id) initWithImageView:(UIImageView *)imageView;
 - (void) addAllowedDropLocation:(SEDraggableLocation *)location;
 - (void) snapCenterToPoint:(CGPoint)point animated:(BOOL)animated completion:(void (^)(BOOL))completionBlock;
 
