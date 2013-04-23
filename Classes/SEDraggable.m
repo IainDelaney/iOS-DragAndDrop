@@ -25,47 +25,33 @@
 
 @implementation SEDraggable
 
-@synthesize shouldSnapBackToHomeLocation = _shouldSnapBackToHomeLocation;
-@synthesize shouldSnapBackToDragOrigin = _shouldSnapBackToDragOrigin;
-@synthesize currentLocation = _currentLocation;
-@synthesize homeLocation = _homeLocation;
-@synthesize previousLocation = _previousLocation;
-@synthesize delegate = _delegate;
-@synthesize droppableLocations = _droppableLocations;
-@synthesize panGestureRecognizer = _panGestureRecognizer;
-@synthesize firstX;
-@synthesize firstY;
-
-
-
 #pragma mark- Lifecycle
 
-- (id) init {
-  if (self = [self initWithFrame:CGRectNull]) {
-  }
-  return self;
-}
-
-- (id) initWithImage:(UIImage *)image andSize:(CGSize)size {
-  UIImageView *imageView = [[UIImageView alloc] initWithImage:image];
-  imageView.frame = CGRectMake(0, 0, size.width, size.height);
-  
-  self = [self initWithImageView:imageView];
-  if (self) {
-  }
-  return self;
-}
-
-- (id) initWithImageView:(UIImageView *)imageView {
-  self = [self initWithFrame:imageView.frame];
-  if (self) {
-    imageView.frame = CGRectMake(0, 0, imageView.frame.size.width, imageView.frame.size.height);
-    [self addSubview:imageView];
-  }
-  return self;
-}
-
 #pragma mark -- Designated initializer
+
+- (id)initWithImage:(UIImage *)image
+{
+    if (self = [super initWithImage:image]) {
+        self.userInteractionEnabled = YES;
+        // pan gesture handling
+        self.panGestureRecognizer = [[UIPanGestureRecognizer alloc] initWithTarget:self action:@selector(handleDrag:)];
+        self.panGestureRecognizer.minimumNumberOfTouches = 1;
+        self.panGestureRecognizer.maximumNumberOfTouches = 1;
+        self.panGestureRecognizer.delegate = self;
+        [self addGestureRecognizer:self.panGestureRecognizer];
+
+        self.shouldSnapBackToHomeLocation = NO;
+        self.shouldSnapBackToDragOrigin = YES;
+
+        self.homeLocation = nil;
+        self.currentLocation = nil;
+        self.previousLocation = nil;
+
+        self.droppableLocations = [NSMutableSet set];
+    }
+    return self;
+}
+
 
 - (id) initWithFrame:(CGRect)frame {
   self = [super initWithFrame:frame];
@@ -115,12 +101,11 @@
   // movement has just begun
   if (self.panGestureRecognizer.state == UIGestureRecognizerStateBegan) {
     // keep track of where the movement began
-    firstX = [self center].x;
-    firstY = [self center].y;
+    _firstX = [self center].x;
+    _firstY = [self center].y;
   }
-  translatedPoint = CGPointMake(firstX + translatedPoint.x, firstY + translatedPoint.y);
-  [self setCenter:translatedPoint];
-  
+  translatedPoint = CGPointMake(_firstX + translatedPoint.x, _firstY + translatedPoint.y);
+  self.center = translatedPoint;
   // movement is currently in process
   if (self.panGestureRecognizer.state == UIGestureRecognizerStateChanged) {
     if ([self.delegate respondsToSelector:@selector(draggableObjectDidMove:)])
@@ -295,9 +280,9 @@
     if ([decoder containsValueForKey:kSHOULD_SNAP_BACK_TO_DRAG_ORIGIN_KEY])
       self.shouldSnapBackToDragOrigin = [decoder decodeBoolForKey:kSHOULD_SNAP_BACK_TO_DRAG_ORIGIN_KEY];
     if ([decoder containsValueForKey:kFIRST_X_KEY])
-      firstX = [decoder decodeFloatForKey:kFIRST_X_KEY];
+      _firstX = [decoder decodeFloatForKey:kFIRST_X_KEY];
     if ([decoder containsValueForKey:kFIRST_Y_KEY])
-      firstY = [decoder decodeFloatForKey:kFIRST_Y_KEY];
+      _firstY = [decoder decodeFloatForKey:kFIRST_Y_KEY];
   }
   return self;
 }
