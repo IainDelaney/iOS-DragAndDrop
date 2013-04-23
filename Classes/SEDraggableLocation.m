@@ -438,8 +438,7 @@ const NSInteger SEDraggableLocationPositionDetermineAutomatically = -1;
   [encoder encodeFloat:self.highlightOpacity forKey:kHIGHLIGHT_OPACITY_KEY];
   [encoder encodeFloat:self.animationDuration forKey:kANIMATION_DURATION_KEY];
   [encoder encodeFloat:self.animationDelay forKey:kANIMATION_DELAY_KEY];
-#warning //ivar named: animationOptions  and of type: UIViewAnimationOptions -- TYPE_NOT_SUPPORTED
-#warning //[encoder encodeType(?):self.animationOptions forKey:kANIMATION_OPTIONS_KEY];
+  [encoder encodeInteger:self.animationOptions forKey:kANIMATION_OPTIONS_KEY];
   [encoder encodeBool:self.fillHorizontallyFirst forKey:kFILL_HORIZONTALLY_FIRST_KEY];
   [encoder encodeBool:self.allowRows forKey:kALLOW_ROWS_KEY];
   [encoder encodeBool:self.allowColumns forKey:kALLOW_COLUMNS_KEY];
@@ -491,8 +490,8 @@ const NSInteger SEDraggableLocationPositionDetermineAutomatically = -1;
         self.animationDuration = [decoder decodeFloatForKey:kANIMATION_DURATION_KEY];
     if ([decoder containsValueForKey:kANIMATION_DELAY_KEY])
         self.animationDelay = [decoder decodeFloatForKey:kANIMATION_DELAY_KEY];
-    #warning //ivar named: animationOptions and of type: UIViewAnimationOptions -- TYPE_NOT_SUPPORTED 
-    #warning //[self setAnimationOptions:[decoder decodeType(?)ForKey:kANIMATION_OPTIONS_KEY]];
+    if ([decoder containsValueForKey:kANIMATION_OPTIONS_KEY])
+        [self setAnimationOptions:[decoder decodeIntegerForKey:kANIMATION_OPTIONS_KEY]];
     if ([decoder containsValueForKey:kFILL_HORIZONTALLY_FIRST_KEY])
         self.fillHorizontallyFirst = [decoder decodeBoolForKey:kFILL_HORIZONTALLY_FIRST_KEY];
     if ([decoder containsValueForKey:kALLOW_ROWS_KEY])
