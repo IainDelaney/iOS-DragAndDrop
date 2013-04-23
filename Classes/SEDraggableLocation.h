@@ -90,8 +90,8 @@ typedef enum {
 @property (nonatomic, readwrite) BOOL fillHorizontallyFirst;
 @property (nonatomic, readwrite) BOOL allowRows;
 @property (nonatomic, readwrite) BOOL allowColumns;
-@property (nonatomic, readwrite, unsafe_unretained) id <SEDraggableLocationEventResponder> delegate;
-@property (nonatomic, readwrite, strong) NSMutableArray *containedObjects;
+@property (nonatomic, weak) id <SEDraggableLocationEventResponder> delegate;
+@property (nonatomic, strong) NSMutableArray *containedObjects;
 
 
 - (void) removeDraggableObject:(SEDraggable *)draggable;
