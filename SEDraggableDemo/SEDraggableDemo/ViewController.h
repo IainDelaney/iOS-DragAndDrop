@@ -8,8 +8,6 @@
 
 #import <UIKit/UIKit.h>
 
-#define UIImageWithBundlePNG(x) ([UIImage imageWithContentsOfFile: [[NSBundle mainBundle] pathForResource:[NSString stringWithFormat:(x)] ofType:@"png"]])
-
 @interface ViewController : UIViewController
 
 @end
