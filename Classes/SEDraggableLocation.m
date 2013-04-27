@@ -165,8 +165,10 @@ const NSInteger SEDraggableLocationPositionDetermineAutomatically = -1;
       break;
   }
   
-  if (allow) [self acceptDraggableObject:draggable entryMethod:entryMethod animated:animated];
-  else       [self refuseDraggableObject:draggable entryMethod:entryMethod animated:animated];
+  if (allow)
+      [self acceptDraggableObject:draggable entryMethod:entryMethod animated:animated];
+  else
+      [self refuseDraggableObject:draggable entryMethod:entryMethod animated:animated];
   
   return allow;
 }
@@ -214,8 +216,10 @@ const NSInteger SEDraggableLocationPositionDetermineAutomatically = -1;
   int row, col;
   
   // prevent divide-by-zero errors
-  if (objectsPerRow == 0) objectsPerRow = 1;
-  if (objectsPerCol == 0) objectsPerCol = 1;
+  if (objectsPerRow == 0)
+      objectsPerRow = 1;
+  if (objectsPerCol == 0)
+      objectsPerCol = 1;
   
   if (self.fillHorizontallyFirst) {
     col = position % objectsPerRow;
@@ -255,7 +259,6 @@ const NSInteger SEDraggableLocationPositionDetermineAutomatically = -1;
 }
 
 - (void) recalculateAllObjectPositions {
-  __block SEDraggableLocation *myself = self;
   
   void (^blockRecalculate)() = ^{
     NSUInteger index = 0;
@@ -263,10 +266,11 @@ const NSInteger SEDraggableLocationPositionDetermineAutomatically = -1;
     srand(iseed);
     double max = RAND_MAX;
     double irand;
-    double mult = myself.randomArrangementOffsetMultiplier;
-    for (SEDraggable *object in myself.containedObjects) {
-      CGPoint centerInWindowCoords = [myself getAcceptableWindowCoordsForDraggableObject:object inPosition:index];
-      CGPoint centerInLocalCoords = [myself convertPoint:centerInWindowCoords fromView:nil];
+    double mult = self.randomArrangementOffsetMultiplier;
+    for (SEDraggable *object in self.containedObjects)
+    {
+      CGPoint centerInWindowCoords = [self getAcceptableWindowCoordsForDraggableObject:object inPosition:index];
+      CGPoint centerInLocalCoords = [self convertPoint:centerInWindowCoords fromView:nil];
       index++;
       irand = (double)rand();
       centerInLocalCoords.x += (CGFloat)((irand / max) * mult) - (mult / 2);
@@ -274,34 +278,32 @@ const NSInteger SEDraggableLocationPositionDetermineAutomatically = -1;
       
       [object setCenter:centerInLocalCoords];
       
-      if ([myself.delegate respondsToSelector:@selector(draggableLocation:didMoveObject:)])
-        [myself.delegate draggableLocation:myself didMoveObject:object];
+      if ([self.delegate respondsToSelector:@selector(draggableLocation:didMoveObject:)])
+        [self.delegate draggableLocation:self didMoveObject:object];
     }
   };
   
   void (^blockCompletion)(BOOL) = ^(BOOL finished) {
-    if ([myself.delegate respondsToSelector:@selector(draggableLocationDidRecalculateObjectPositions:)])
-      [myself.delegate draggableLocationDidRecalculateObjectPositions:myself];
+    if ([self.delegate respondsToSelector:@selector(draggableLocationDidRecalculateObjectPositions:)])
+      [self.delegate draggableLocationDidRecalculateObjectPositions:self];
   };
   
-  if (self.shouldAnimateObjectAdjustments) {
+  if (self.shouldAnimateObjectAdjustments)
+  {
     [UIView animateWithDuration:self.animationDuration delay:self.animationDelay options:self.animationOptions
                      animations:blockRecalculate completion:blockCompletion];
-  }
-  else {
+  }else{
     blockRecalculate();
     blockCompletion(YES);
   }
 }
 
-- (BOOL) pointIsInsideResponsiveBounds:(CGPoint)point {
+- (BOOL) pointIsInsideResponsiveBounds:(CGPoint)point
+{
   CGPoint localPoint = [self.responsiveBounds convertPoint:point fromView:nil];
   BOOL inside = [self.responsiveBounds pointInside:localPoint withEvent:nil];
   return inside;
 }
-
-
-
 
 #pragma mark- Entry decision handlers
 
@@ -359,19 +361,17 @@ const NSInteger SEDraggableLocationPositionDetermineAutomatically = -1;
 
   CGPoint destinationPointInLocalCoords = [self convertPoint:destinationPointInWindowCoords fromView:nil];
   
-  __block SEDraggableLocation *myself = self;
-  __block SEDraggable *blockDraggable = draggable;
   void (^completionBlock)(BOOL) = ^(BOOL finished) {
-    if (myself.shouldKeepObjectsArranged)
-      [myself recalculateAllObjectPositions];
+    if (self.shouldKeepObjectsArranged)
+      [self recalculateAllObjectPositions];
     
     // notify the draggable
-    if ([blockDraggable respondsToSelector:@selector(draggableLocation:didAllowEntry:animated:)])
-      [blockDraggable draggableLocation:myself didAllowEntry:entryMethod animated:animated];
+    if ([draggable respondsToSelector:@selector(draggableLocation:didAllowEntry:animated:)])
+      [draggable draggableLocation:self didAllowEntry:entryMethod animated:animated];
     
     // notify my delegate
-    if ([myself.delegate respondsToSelector:@selector(draggableLocation:didAcceptObject:entryMethod:)])
-      [myself.delegate draggableLocation:myself didAcceptObject:blockDraggable entryMethod:entryMethod];
+    if ([self.delegate respondsToSelector:@selector(draggableLocation:didAcceptObject:entryMethod:)])
+      [self.delegate draggableLocation:self didAcceptObject:draggable entryMethod:entryMethod];
   };
   
   if (animated) {
